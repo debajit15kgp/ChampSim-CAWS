@@ -127,8 +127,10 @@ void CACHE::handle_fill()
         if (do_fill){
             // update prefetcher
 	  if (cache_type == IS_L1I)
+      {
 	    l1i_prefetcher_cache_fill(fill_cpu, ((MSHR.entry[mshr_index].ip)>>LOG2_BLOCK_SIZE)<<LOG2_BLOCK_SIZE, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0, ((block[set][way].ip)>>LOG2_BLOCK_SIZE)<<LOG2_BLOCK_SIZE);
-	    if (cache_type == IS_L1D)
+	   }
+        if (cache_type == IS_L1D)
 	      l1d_prefetcher_cache_fill(MSHR.entry[mshr_index].full_addr, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0, block[set][way].address<<LOG2_BLOCK_SIZE,
 					MSHR.entry[mshr_index].pf_metadata);
 	    if  (cache_type == IS_L2C)
@@ -457,7 +459,9 @@ void CACHE::handle_writeback()
                 if (do_fill) {
                     // update prefetcher
 		  if (cache_type == IS_L1I)
+          {
 		    l1i_prefetcher_cache_fill(writeback_cpu, ((WQ.entry[index].ip)>>LOG2_BLOCK_SIZE)<<LOG2_BLOCK_SIZE, set, way, 0, ((block[set][way].ip)>>LOG2_BLOCK_SIZE)<<LOG2_BLOCK_SIZE);
+        }
                     if (cache_type == IS_L1D)
 		      l1d_prefetcher_cache_fill(WQ.entry[index].full_addr, set, way, 0, block[set][way].address<<LOG2_BLOCK_SIZE, WQ.entry[index].pf_metadata);
                     else if (cache_type == IS_L2C)
@@ -528,8 +532,9 @@ void CACHE::handle_read()
 
       uint32_t read_cpu = RQ.entry[RQ.head].cpu;
       if (read_cpu == NUM_CPUS)
+      {
         return;
-
+    }
         // handle the oldest entry
         if ((RQ.entry[RQ.head].event_cycle <= current_core_cycle[read_cpu]) && (RQ.occupancy > 0)) {
             int index = RQ.head;
@@ -831,8 +836,9 @@ void CACHE::handle_prefetch()
       
       uint32_t prefetch_cpu = PQ.entry[PQ.head].cpu;
       if (prefetch_cpu == NUM_CPUS)
+      {
         return;
-
+    }
         // handle the oldest entry
         if ((PQ.entry[PQ.head].event_cycle <= current_core_cycle[prefetch_cpu]) && (PQ.occupancy > 0)) {
             int index = PQ.head;
